@@ -75,16 +75,66 @@ class ClienteDAO:
             if conexion:
                 conexion.close()
 
+    @classmethod
+    def actualizar(cls, cliente):
+        conexion = None
+        cursor = None
 
+        try:
+            conexion = Conexion.obtener_conexion()
+            cursor = conexion.cursor()
+            valores = (
+                cliente.nombre,
+                cliente.apellido,
+                cliente.telefono,
+                cliente.correo,
+                cliente.membresia,
+                cliente.id,
+            )
+            cursor.execute(cls.ACTUALIZAR, valores)
+            conexion.commit()
+            return cursor.rowcount
+
+        except Exception as e:
+            print(f"Ocurrió un error al actualizar  clientes: {e}")
+        finally:
+            if cursor:
+                cursor.close()
+
+            if conexion:
+                conexion.close()
+
+
+# =========================
+# PRUEBA ACTUALIZAR
+# =========================
 if __name__ == "__main__":
-
-    cliente1 = Cliente(
-        71795830, "Jorge", "Mosquera", "3001234567", "jorge@gmail.com", "AF001"
+    actualizar_cliente = Cliente(
+        71795830,
+        "Jorge",
+        "Mosquera",
+        "3003669824",
+        "jorge_mosquera6@hotmail.com",
+        "AC001",
     )
-    registros_insertados = ClienteDAO.insertar(cliente1)
+    cliente_actuilizado = ClienteDAO.actualizar(actualizar_cliente)
+    print(f"Clientes actualizados: {cliente_actuilizado}")
 
-    print(f"Registros insertados: {registros_insertados}")
+# =========================
+# PRUEBA INSERTAR
+# =========================
+# if __name__ == "__main__":
 
+# cliente1 = Cliente(
+# 71795830, "Jorge", "Mosquera", "3001234567", "jorge@gmail.com", "AF001"
+# )
+# registros_insertados = ClienteDAO.insertar(cliente1)
+
+# print(f"Registros insertados: {registros_insertados}")
+
+# =========================
+# PRUEBA SELECCION
+# =========================
 # if __name__ == "__main__":
 # clientes = ClienteDAO.seleccionar()
 # for cliente in clientes:
