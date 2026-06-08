@@ -96,7 +96,7 @@ class ClienteDAO:
             return cursor.rowcount
 
         except Exception as e:
-            print(f"Ocurrió un error al actualizar  clientes: {e}")
+            print(f"Ocurrió un error al actualizar clientes: {e}")
         finally:
             if cursor:
                 cursor.close()
@@ -104,21 +104,50 @@ class ClienteDAO:
             if conexion:
                 conexion.close()
 
+    @classmethod
+    def eliminar(cls, cliente):
+        conexion = None
+        cursor = None
+        try:
+            conexion = Conexion.obtener_conexion()
+            cursor = conexion.cursor()
+            valor = (cliente.id,)
+            cursor.execute(cls.ELIMINAR, valor)
+            conexion.commit()
+            return cursor.rowcount
+        except Exception as e:
+            print(f"Ocurrió un error al eliminar clientes: {e}")
+        finally:
+            if cursor:
+                cursor.close()
+            if conexion:
+                conexion.close()
+
+
+# =========================
+# PRUEBA ELIMINAR
+# =========================
+
+# if __name__ == "__main__":
+# cliente1 = Cliente(id=71795830)
+# registros_eliminados = ClienteDAO.eliminar(cliente1)
+#
+# if registros_eliminados is None:
+#    print("No fue posible conectar con la base de datos")
+# elif registros_eliminados > 0:
+#     print("Cliente eliminado correctamente")
+# else:
+#     print("No se encontró el cliente")
 
 # =========================
 # PRUEBA ACTUALIZAR
 # =========================
-if __name__ == "__main__":
-    actualizar_cliente = Cliente(
-        71795830,
-        "Jorge",
-        "Mosquera",
-        "3003669824",
-        "jorge_mosquera6@hotmail.com",
-        "AC001",
-    )
-    cliente_actuilizado = ClienteDAO.actualizar(actualizar_cliente)
-    print(f"Clientes actualizados: {cliente_actuilizado}")
+# if __name__ == "__main__":
+# actualizar_cliente = Cliente(
+#
+# )
+# cliente_actuilizado = ClienteDAO.actualizar(actualizar_cliente)
+# print(f"Clientes actualizados: {cliente_actuilizado}")
 
 # =========================
 # PRUEBA INSERTAR
