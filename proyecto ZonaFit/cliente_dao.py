@@ -5,9 +5,28 @@ from conexionDB import Conexion
 class ClienteDAO:
 
     SELECCIONAR = "SELECT * FROM cliente"
-    INSERTAR = "INSERT INTO cliente (id, nombre, apellido, telefono, correo, membresia) VALUES (?,?,?,?,?,?)"
-    ACTUALIZAR = "UPDATE cliente SET nombre=?, apellido=?, telefono=?, correo=?, membresia=? WHERE id=?"
-    ELIMINAR = "DELETE FROM cliente WHERE id=?"
+
+    INSERTAR = """
+    INSERT INTO cliente
+    (id_cliente, nombre, apellido, telefono, correo,
+     membresia, fecha_inscripcion, fecha_vencimiento, estado)
+    VALUES (?,?,?,?,?,?,?,?,?)
+    """
+
+    ACTUALIZAR = """
+    UPDATE cliente
+    SET nombre=?,
+        apellido=?,
+        telefono=?,
+        correo=?,
+        membresia=?,
+        fecha_inscripcion=?,
+        fecha_vencimiento=?,
+        estado=?
+    WHERE id_cliente=?
+    """
+
+    ELIMINAR = "DELETE FROM cliente WHERE id_cliente=?"
 
     @classmethod
     def seleccionar(cls):
@@ -19,18 +38,22 @@ class ClienteDAO:
             cursor = conexion.cursor()
             cursor.execute(cls.SELECCIONAR)
 
-            seleccion = cursor.fetchall()
+            registros = cursor.fetchall()
             clientes = []
 
-            for seleccionado in seleccion:
+            for registro in registros:
                 cliente = Cliente(
-                    seleccionado[0],
-                    seleccionado[1],
-                    seleccionado[2],
-                    seleccionado[3],
-                    seleccionado[4],
-                    seleccionado[5],
+                    registro[0],  # id_cliente
+                    registro[1],  # nombre
+                    registro[2],  # apellido
+                    registro[3],  # telefono
+                    registro[4],  # correo
+                    registro[5],  # membresia
+                    registro[6],  # fecha_inscripcion
+                    registro[7],  # fecha_vencimiento
+                    registro[8],  # estado
                 )
+
                 clientes.append(cliente)
 
             return clientes
@@ -53,20 +76,26 @@ class ClienteDAO:
         try:
             conexion = Conexion.obtener_conexion()
             cursor = conexion.cursor()
+
             valores = (
-                cliente.id,
+                cliente.id_cliente,
                 cliente.nombre,
                 cliente.apellido,
                 cliente.telefono,
                 cliente.correo,
                 cliente.membresia,
+                cliente.fecha_inscripcion,
+                cliente.fecha_vencimiento,
+                cliente.estado,
             )
+
             cursor.execute(cls.INSERTAR, valores)
             conexion.commit()
+
             return cursor.rowcount
 
         except Exception as e:
-            print(f"Ocurrió un error al seleccionar clientes: {e}")
+            print(f"Ocurrió un error al insertar clientes: {e}")
 
         finally:
             if cursor:
@@ -83,20 +112,27 @@ class ClienteDAO:
         try:
             conexion = Conexion.obtener_conexion()
             cursor = conexion.cursor()
+
             valores = (
                 cliente.nombre,
                 cliente.apellido,
                 cliente.telefono,
                 cliente.correo,
                 cliente.membresia,
-                cliente.id,
+                cliente.fecha_inscripcion,
+                cliente.fecha_vencimiento,
+                cliente.estado,
+                cliente.id_cliente,
             )
+
             cursor.execute(cls.ACTUALIZAR, valores)
             conexion.commit()
+
             return cursor.rowcount
 
         except Exception as e:
             print(f"Ocurrió un error al actualizar clientes: {e}")
+
         finally:
             if cursor:
                 cursor.close()
@@ -108,63 +144,84 @@ class ClienteDAO:
     def eliminar(cls, cliente):
         conexion = None
         cursor = None
+
         try:
             conexion = Conexion.obtener_conexion()
             cursor = conexion.cursor()
-            valor = (cliente.id,)
+
+            valor = (cliente.id_cliente,)
+
             cursor.execute(cls.ELIMINAR, valor)
             conexion.commit()
+
             return cursor.rowcount
+
         except Exception as e:
             print(f"Ocurrió un error al eliminar clientes: {e}")
+
         finally:
             if cursor:
                 cursor.close()
+
             if conexion:
                 conexion.close()
 
 
-# =========================
-# PRUEBA ELIMINAR
-# =========================
+"""
+if __name__ == "__main__":
+    clientes = ClienteDAO.seleccionar()
 
-# if __name__ == "__main__":
-# cliente1 = Cliente(id=71795830)
-# registros_eliminados = ClienteDAO.eliminar(cliente1)
-#
-# if registros_eliminados is None:
-#    print("No fue posible conectar con la base de datos")
-# elif registros_eliminados > 0:
-#     print("Cliente eliminado correctamente")
-# else:
-#     print("No se encontró el cliente")
+    for cliente in clientes:
+        print(cliente)
+        
+if __name__ == "__main__":
 
-# =========================
-# PRUEBA ACTUALIZAR
-# =========================
-# if __name__ == "__main__":
-# actualizar_cliente = Cliente(
-#
-# )
-# cliente_actuilizado = ClienteDAO.actualizar(actualizar_cliente)
-# print(f"Clientes actualizados: {cliente_actuilizado}")
+    cliente1 = Cliente(
+        71795830,
+        "Jorge",
+        "Mosquera",
+        "3001234567",
+        "jorge@gmail.com",
+        "Premium",
+        "2026-06-01",
+        "2026-07-01",
+        "Activo"
+    )
 
-# =========================
-# PRUEBA INSERTAR
-# =========================
-# if __name__ == "__main__":
+    registros_insertados = ClienteDAO.insertar(cliente1)
 
-# cliente1 = Cliente(
-# 71795830, "Jorge", "Mosquera", "3001234567", "jorge@gmail.com", "AF001"
-# )
-# registros_insertados = ClienteDAO.insertar(cliente1)
+    print(f"Registros insertados: {registros_insertados}")
+    
+    
+    
+    # Actualizar
+    if __name__ == "__main__":
 
-# print(f"Registros insertados: {registros_insertados}")
+    cliente_actualizado = Cliente(
+        71795830,
+        "Jorge Andres",
+        "Mosquera",
+        "3119876543",
+        "jorge@gmail.com",
+        "VIP",
+        "2026-06-01",
+        "2026-08-01",
+        "Activo"
+    )
 
-# =========================
-# PRUEBA SELECCION
-# =========================
-# if __name__ == "__main__":
-# clientes = ClienteDAO.seleccionar()
-# for cliente in clientes:
-#   print(cliente)
+    registros_actualizados = ClienteDAO.actualizar(cliente_actualizado)
+
+    print(f"Registros actualizados: {registros_actualizados}")
+
+
+
+if __name__ == "__main__":
+
+    cliente_eliminar = Cliente(
+        id_cliente=71795830
+    )
+
+    registros_eliminados = ClienteDAO.eliminar(cliente_eliminar)
+
+    print(f"Registros eliminados: {registros_eliminados}")
+"""
