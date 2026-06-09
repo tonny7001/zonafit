@@ -1,34 +1,20 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-from cliente_dao import ClienteDAO
-
-# ==============================
-# FUNCION LOGIN
-# ==============================
+# ==========================
+# FUNCIONES
+# ==========================
 
 
-def ingresar(event=None):
-
+def ingresar():
     usuario = user_texto.get().strip()
     password = password_texto.get().strip()
 
-    if usuario == "root" and password == "admin":
+    if not usuario or not password:
+        messagebox.showwarning("Campos vacíos", "Debe ingresar usuario y contraseña")
+        return
 
-        messagebox.showinfo("Acceso correcto", f"Bienvenido {usuario}")
-
-        clientes = ClienteDAO.seleccionar()
-        user_texto.delete(0, tk.END)
-        password_texto.delete(0, tk.END)
-
-        for cliente in clientes:
-            print(cliente)
-
-    else:
-
-        messagebox.showerror("Error", "Usuario o contraseña incorrectos")
-        user_texto.delete(0, tk.END)
-        password_texto.delete(0, tk.END)
+    messagebox.showinfo("Acceso correcto", f"Bienvenido {usuario}")
 
 
 # ==========================
@@ -40,13 +26,6 @@ ventana.title("Zona Fit Login")
 ventana.geometry("600x600")
 ventana.resizable(False, False)
 ventana.configure(background="#2E3D47")
-
-# ==========================
-# GRID
-# ==========================
-
-ventana.columnconfigure(0, weight=1)
-ventana.rowconfigure(0, weight=1)
 
 # ==========================
 # ESTILOS
@@ -65,21 +44,22 @@ estilos.configure(
 )
 
 estilos.configure(
-    "Subtitulo.TLabel",
-    background="#2E3D47",
-    foreground="#DADADA",
-    font=("Arial", 11),
+    "Subtitulo.TLabel", background="#2E3D47", foreground="#DADADA", font=("Arial", 11)
 )
 
 estilos.configure(
-    "TLabel",
-    background="#2E3D47",
-    foreground="white",
-    font=("Arial", 10),
+    "TLabel", background="#2E3D47", foreground="white", font=("Arial", 10)
 )
 
 # ==========================
-# FRAME
+# CONFIGURACION GRID
+# ==========================
+
+ventana.columnconfigure(0, weight=1)
+ventana.rowconfigure(0, weight=1)
+
+# ==========================
+# FRAME PRINCIPAL
 # ==========================
 
 frame = ttk.Frame(ventana, padding=30)
@@ -99,18 +79,18 @@ subtitulo.grid(row=1, column=0, columnspan=2, pady=(0, 25))
 # USUARIO
 # ==========================
 
-lbl_usuario = ttk.Label(frame, text="Usuario:")
-lbl_usuario.grid(row=2, column=0, sticky=tk.W, padx=10, pady=10)
+user = ttk.Label(frame, text="Usuario:")
+user.grid(row=2, column=0, sticky=tk.W, padx=10, pady=10)
 
 user_texto = ttk.Entry(frame, width=30)
 user_texto.grid(row=2, column=1, padx=10, pady=10)
 
 # ==========================
-# PASSWORD
+# CONTRASEÑA
 # ==========================
 
-lbl_password = ttk.Label(frame, text="Contraseña:")
-lbl_password.grid(row=3, column=0, sticky=tk.W, padx=10, pady=10)
+password = ttk.Label(frame, text="Contraseña:")
+password.grid(row=3, column=0, sticky=tk.W, padx=10, pady=10)
 
 password_texto = ttk.Entry(frame, width=30, show="*")
 password_texto.grid(row=3, column=1, padx=10, pady=10)
@@ -120,20 +100,28 @@ password_texto.grid(row=3, column=1, padx=10, pady=10)
 # ==========================
 
 boton = ttk.Button(frame, text="Entrar", command=ingresar)
-boton.grid(
-    row=4,
-    column=0,
-    columnspan=2,
-    pady=20,
-    ipadx=15,
-    ipady=5,
-)
+boton.grid(row=4, column=0, columnspan=2, pady=20, ipadx=15, ipady=5)
 
-# ENTER PARA INGRESAR
-ventana.bind("<Return>", ingresar)
+# Permite iniciar sesión con Enter
+ventana.bind("<Return>", lambda event: ingresar())
 
-# ==========================
-# INICIO
-# ==========================
+# Cursor inicialmente en usuario
+user_texto.focus()
 
 ventana.mainloop()
+
+
+"""
+no perdeer este dato calcular la fecha de vencimiento en base a la fecha de inscripcion 
+from datetime import datetime, timedelta
+
+fecha_inscripcion = datetime.now()
+fecha_vencimiento = fecha_inscripcion + timedelta(days=30)
+
+print(fecha_vencimiento.strftime("%Y-%m-%d"))
+
+
+
+
+
+"""
