@@ -162,18 +162,18 @@ class UsuarioDAO:
 # ==========================
 #  PRUEBA INSERTAR
 # ==========================
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    usuario1 = Usuario(
-        71795830,
-        "Jorge",
-        "Mosquera",
-        "3001234567",
-        "jorge@gmail.com",
-        "Administrador",
-        "Activo",
-    )
+# usuario1 = Usuario(
+#  71795830,
+#  "Jorge",
+#  "Mosquera",
+#  "3001234567",
+#  "jorge@gmail.com",
+#  "Administrador",
+#  "Activo",
+# )
 
-    registros_insertados = UsuarioDAO.insertar(usuario1)
+# registros_insertados = UsuarioDAO.insertar(usuario1)
 
-    print(f"Usuarios insertados: {registros_insertados}")
+# print(f"Usuarios insertados: {registros_insertados}")
