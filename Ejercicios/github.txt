@@ -5,11 +5,3 @@ git push
 
 
 
-CREATE TABLE cliente (
-        id INT PRIMARY KEY NOT NULL,
-        nombre VARCHAR(100) NOT NULL,
-        apellido VARCHAR(100) NOT NULL,
-        telefono VARCHAR(20) NOT NULL,
-        correo VARCHAR(100),
-        membresia VARCHAR(20) NOT NULL
-    )
